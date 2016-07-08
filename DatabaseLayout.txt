@@ -4,17 +4,23 @@ Person
 	pinyin
 	notone		(pinyin without tone indication)
 	other		(other possible names, in pinyin)
+％ Field for names in other languages (other than Chinese, so not pinyin) now we want glossaries for different languages I guess we will need more fields, especially since some items have Sanskrit, Tibetan and Chinese names. 
 	othernotone	(other possible names, in notone)
+% We can forget about this one. Also in terms and books
 	wadegiles	(???)
+％ Wade Giles was the romanisation of choice for Chinese before pinyin and many Chinese classics are still better known abroad by their Wade Giles names, e.g the I Ching.
 	description	(longer description about the person)
-	index		(???)
-	inglossary	(what is this?)
+	index		(???)   
+％ index is a hack to ensure that English names are ordered alphabetically by surname; do you think we need seperate fields for surname and forenames?
+	inglossary	(what is this?)  
+％ inglossary is a flag to say if the item will appear in the the glossary listing; if it is easy to do, it would be better to replace this with a list of keywords that can later be used to produce filtered lists, e.g. logic, pre-qin, japanese, etc.
+
 
 Term
 	id(name)
 	hanzi
 	pinyin
-	gloss
+	gloss		(in English)
 	notone
 	other
 	othernotone
