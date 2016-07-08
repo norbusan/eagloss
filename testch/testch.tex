@@ -1,0 +1,148 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+\documentclass{article}
+
+\usepackage{hyperref} 
+
+
+% Bibliography
+\usepackage{natbib}
+
+
+% Fonts
+\usepackage{fontspec} 
+\usepackage{xeCJK} 
+\setmainfont[Mapping=tex-text]{Times New Roman} % rm
+\setsansfont[Mapping=tex-text]{Arial}           % sf
+\setmonofont{Courier New}                       % tt
+\setCJKmainfont{HAN NOM A} %xelatex 標楷體
+%\setCJKmonofont{MingLiU}  %xelatex 細明體
+\xeCJKDeclareSubCJKBlock{ExtB}{ "20000 -> "2A6DF }
+\setCJKmainfont[ExtB=HAN NOM B,AutoFakeBold=1.5]{HAN NOM A}
+\setCJKsansfont[ExtB=HAN NOM B,AutoFakeBold=1.5]{HAN NOM A}
+%\newfontfamily\greekfont[Mapping=tex-text]{Times New Roman}
+
+% Quotation marks
+\newif\ifbritquote\britquotefalse  
+%\britquotetrue % uncomment for British
+\newif\ifinsidequote\insidequotefalse
+\def\qt#1{\ifinsidequote\insidequotefalse\insidequote{#1}\insidequotetrue\else\insidequotetrue\outsidequote{#1}\insidequotefalse\fi}
+\def\insidequote#1{\ifbritquote ``#1"\else `#1'\fi}
+\def\outsidequote#1{\ifbritquote `#1'\else ``#1"\fi}
+% and for Chinese
+\def\cqt#1{\ifinsidequote\insidequotefalse‘#1’\insidequotetrue\else\insidequotetrue“#1”\insidequotefalse\fi}
+% also 书名号
+\def\smh#1{《\hspace*{-2pt}#1\hspace*{-2pt}》}
+
+% Footnotes
+\usepackage[hang,flushmargin]{footmisc} 
+
+\newif\iffootnote
+\let\Footnote\footnote
+\renewcommand\footnote[1]{\begingroup\footnotetrue\Footnote{#1}\endgroup}
+
+
+
+% Index
+\usepackage{makeidx}
+\makeindex
+
+
+% Database for glossary
+\usepackage{longdata}  % this is an extension of datatools.sty that allows \par in fields
+
+%commands to get a punctuation to avoid interaction with delimiters in the database (CSV)
+\def\comma{,}
+\def\semicolon{;}
+\def\colon{:}  
+
+% test for blanks
+\newcommand\ifblankcs[1]{\edef\doit{\noexpand\ifblank{#1}}\doit}
+  
+%  Technical terms database and commands
+\DTLloaddb{terms}{terms.csv}
+
+\def\term#1#2{\DTLforeach*[\DTLiseq{\name}{#1}]{terms}{\hanzi=hanzi,\name=name,\py=pinyin,\gl=gloss,\nt=notone,\ot=other,\otnt=othernotone,\desc=description}{\def\notone{\index{\nt @\textit{\py}}\nt}\def\gloss{\index{\gl}\gl}\def\pinyin{\index{\nt @\textit{\py}}\py}\def\other{\index{\otnt @\textit{\ot}}\ot}#2}}
+
+\def\tm#1{\term{#1}{\textit{\pinyin}}}  % primary command
+\def\tmf#1{\term{#1}{\textit{\pinyin} \hanzi (\ifblankcs{\otnt}{}{{\it\other},\ }\gloss)}}	% command for first use
+\def\tme#1{\term{#1}{\gloss}}							% English gloss only
+\def\tmc#1{\term{#1}{\textit{\pinyin} \hanzi}}			% Chinese (pinyin and hanzi )
+
+%  Books database and commands
+\DTLloaddb{books}{books.csv}
+
+\def\book#1#2{%
+\DTLforeach*[\DTLiseq{\name}{#1}]{books}%
+{\hanzi=hanzi,\name=name,\py=pinyin,\nt=notone,\gl=gloss,\ot=other,\otnt=othernotone,\desc=description}%
+{\def\gloss{\index{\gl @\textit{\gl}}\gl}%
+\def\notone{\index{\nt @\textit{\nt}}\nt}%
+\def\pinyin{\index{\nt @\textit{\nt}}\py}%
+\def\other{\ifblankcs{\otnt}{}{\index{\otnt @\textit{\ot}}\ot}}%
+#2}}
+
+\def\bk#1{\book{#1}{\textit{\notone}}}                                % primary command
+\def\bkf#1{\iffootnote\bkn{#1}\else\bk{#1}\footnote{\bkn{#1}}\fi}     % command for first use
+\def\bkn#1{\book{#1}{\textit{\pinyin}\smh{\hanzi}\other\ (\gloss)}}	  % complete book title
+
+%  People database and commands
+\DTLloaddb{people}{people.csv}
+
+\def\person#1#2{\DTLforeach*[\DTLiseq{\name}{#1}]{people}{\hanzi=hanzi,\name=name,\py=pinyin,\nt=notone,\ot=other,\otnt=othernotone,\desc=description}{\def\notone{\index{\nt}\nt}\def\pinyin{\index{\nt}\py}\def\other{\index{\otnt @{\ot}}\ot}#2}}
+
+\def\pn#1{\person{#1}{\notone}}  % primary command
+\def\pnf#1{\iffootnote\pnn{#1}\else\pn{#1}\footnote{\pnn{#1}}\fi}  % first use
+\def\pno#1{\person{#1}{\other}}							% other name only
+\def\pnn#1{\person{#1}{\pinyin \hanzi \ifblankcs{\otnt}{}{\ \other}}}	    % complete  name
+
+% Abbreviations
+\def\bce{B.C.E.}
+\usepackage[super]{nth}   % for writing \nth{3} for 3rd etc
+
+\begin{document}
+
+Some debate as to whether \tmf{ming2} should be interpreted only as \qt{name} or also as \qt{concept}. There is much discussion of \tm{ming2} in early Chinese philosophy both by \tme{rujia}s, especially \pnf{xunzi}, and by the \tme{mojia}s. The most elaborate treatment of the topic is contained in the \bkf{mojing}. For more detail see \cite{dongzt1998}.
+
+
+\bibliography{testch}
+\bibliographystyle{apa-good}
+\nocite{*}
+
+\newpage
+%%%%%%%%%  GLOSSARY OF PEOPLE 
+\section*{Glossary of People}%
+
+\DTLsort*{index}{people}
+\DTLforeach*{people}%
+{\hanzi=hanzi,\name=name,\pinyin=pinyin,\notone=notone,\desc=description,\other=other,\othernotone=othernotone,\wadegiles=wadegiles,\inglossary=inglossary}{%
+\ifblankcs{\inglossary}{\noindent%
+\textbf{\textit{\pinyin}}\index{\notone} \hanzi %
+\ifblankcs{\othernotone}{\ifblankcs{\wadegiles}{}%
+    {\wadegiles\index{\wadegiles}}}%
+    {\other\index{\othernotone @{\other}}}%
+, \desc.\\[4.5pt]}%
+{}}
+
+%%%%%%%%%  GLOSSARY OF TEXTS
+\section*{Glossary of Texts}%
+\DTLforeach*{books}%
+{\hanzi=hanzi,\name=name,\pinyin=pinyin,\gloss=gloss,\notone=notone,\desc=description,\other=other,\othernotone=othernotone,\inglossary=inglossary}{%
+\ifblankcs{\inglossary}{\noindent%
+\textbf{\textit{\pinyin}}\index{\notone @\textit{\notone}}《\hspace*{-2pt}\hanzi \hspace*{-2pt}》(\ifblankcs{\othernotone}{}{\other\index{\othernotone @\textit{\other}}, }\gloss\index{\gloss @\textit{\gloss}}), \desc.\\[5pt]}%
+{}}
+
+
+%%%%%%%%%  GLOSSARY OF TECHNICAL TERMS
+\section*{Glossary of Technical Terms}%
+\DTLforeach*{terms}%
+{\hanzi=hanzi,\name=name,\pinyin=pinyin,\gloss=gloss,\notone=notone,\desc=description,\other=other,\othernotone=othernotone,\inglossary=inglossary}{%
+\ifblankcs{\inglossary}{\noindent%
+\textbf{\textit{\pinyin}}\index{\notone @\textit{\pinyin}}\index{\gloss} \hanzi (\ifblankcs{\othernotone}{}{{\it \other}, \index{\othernotone @\textit{\other}}}\gloss), \desc.\\[5pt]}%
+{}}
+
+
+%%%%%%%%% INDEX
+\printindex
+
+\end{document}
+

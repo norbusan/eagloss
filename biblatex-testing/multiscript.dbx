@@ -1,0 +1,13 @@
+\DeclareDatamodelEntrytypes{person}
+\DeclareDatamodelFields[type=field,datatype=literal]{
+  kanji,
+  furi,
+}
+\DeclareDatamodelFields[type=list,datatype=name]{
+  romaji,
+}
+\DeclareDatamodelEntryfields[person]{
+  kanji,
+  furi,
+  romaji,
+}

@@ -1,0 +1,367 @@
+%% This is the file longdata.sty by Anders Hendrickson.
+%% It is a patch on Nicola L.C. Talbot's datatool.sty package
+%% enabling datatool database entries to include \par commands.
+%%
+%% If you encounter any bugs of the form ``runaway argument?'',
+%% please address them to ahendric@cord.edu.
+%% If you encounter any bugs of any other form,
+%% they are likely bugs with datatool itself.
+
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{longdata}[2011/05/19 v1.0]
+\RequirePackage{datatool}
+
+
+
+
+
+\renewcommand*{\DTLifFPclosedbetween}[5]{%     %AH reworked this macro to fix bug
+  \let\@dtl@dovalue\relax
+  \FPifgt{#1}{#3}%
+    \def\@dtl@dovalue{#5}%
+  \fi
+  \FPiflt{#1}{#2}%
+    \ifx\@dtl@dovalue\relax
+      \def\@dtl@dovalue{#5}%
+    \fi
+  \else
+    \ifx\@dtl@dovalue\relax
+      \def\@dtl@dovalue{#4}%
+    \fi
+  \fi
+\@dtl@dovalue
+}
+
+
+\renewcommand{\dtl@message}[1]{%                     %AH UNSTARRED
+\ifdtlverbose\typeout{#1}\fi}
+
+
+
+\long\def\@dtl@checknumericalstart#1#2\@nil\@nil{%   %AH ADDED \long
+\ifx#1\protect
+  \@dtl@checknumericalstart#2\@nil\@nil\relax
+\else
+  \ifx-#1\relax
+    \def\@dtl@tmp{#2}%
+    \ifx\@empty\@dtl@tmp
+      \@dtl@datatype=0\relax
+    \else
+      \ifnum\@dtl@datatype=0\relax
+        \@dtl@datatype=1\relax
+      \fi
+      \@dtl@checknumericalstart#2\@nil\@nil\relax
+    \fi
+  \else
+    \ifx+#1\relax
+      \def\@dtl@tmp{#2}%
+      \ifx\@empty\@dtl@tmp
+        \@dtl@datatype=0\relax
+      \else
+        \ifnum\@dtl@datatype=0\relax
+          \@dtl@datatype=1\relax
+        \fi
+        \@dtl@checknumericalstart#2\@nil\@nil\relax
+      \fi
+    \else
+    \def\@dtl@tmp{#1}%
+      \ifx#1\$\relax
+        \@dtl@datatype=3\relax
+        \@dtl@checknumericalstart#2\@nil\@nil\relax
+      \else
+        \ifx\@empty\@dtl@tmp
+          \@dtl@datatype=0\relax
+        \else
+          \ifnum\@dtl@datatype=0\relax
+            \@dtl@datatype=1\relax
+          \fi
+          \@dtl@checknumericalloop#1#2\@nil\@nil\relax
+        \fi
+      \fi
+    \fi
+  \fi
+\fi
+}
+
+
+
+
+\long\def\@dtl@checknumericalloop#1#2\@nil{%            %AH ADDED \long
+\def\@dtl@tmp{#1}%
+\ifx\@nnil\@dtl@tmp\relax
+ \let\@dtl@chcknumnext=\@dtl@checknumericalnoop%
+\else
+  \@dtl@ifDigitOrDecimalSep{#1}{%
+  \let\@dtl@chcknumnext=\@dtl@checknumericalloop%
+  \expandafter\ifx\@dtl@decimal#1\relax
+     \if@dtl@numgrpsep
+       \ifnum\@dtl@numgrpsepcount=3\relax
+        \@dtl@numgrpsepcount=-1\relax
+       \else
+        \@dtl@datatype=0\relax
+        \let\@dtl@chcknumnext=\@dtl@checknumericalnoop
+       \fi
+     \else
+       \@dtl@numgrpsepcount=-1\relax
+     \fi
+   \else
+     \ifnum\@dtl@numgrpsepcount=-1\relax
+     \else
+       \advance\@dtl@numgrpsepcount by 1\relax
+     \fi
+   \fi
+}{%
+\ifx\@dtl@numbergroupchar\@dtl@tmp\relax
+  \@dtl@numgrpseptrue
+  \ifnum\@dtl@numgrpsepcount<3\relax
+    \@dtl@datatype=0\relax
+    \let\@dtl@chcknumnext=\@dtl@checknumericalnoop
+  \else
+     \@dtl@numgrpsepcount=0\relax
+  \fi
+\else
+  \@dtl@datatype=0\relax
+  \let\@dtl@chcknumnext=\@dtl@checknumericalnoop
+\fi
+}%
+  \ifx\@dtl@decimal\@dtl@tmp\relax
+   \ifnum\@dtl@datatype<3\relax
+     \@dtl@datatype=2\relax
+   \fi
+   \advance\@dtl@tmpcount by 1\relax
+   \ifnum\@dtl@tmpcount>1\relax
+     \@dtl@datatype=0\relax
+     \let\@dtl@chcknumnext=\@dtl@checknumericalnoop%
+   \fi
+  \fi
+\fi
+\@dtl@chcknumnext#2\@nil
+}
+\long\def\@dtl@checknumericalnoop#1\@nil#2{}                 %AH ADDED \long
+
+
+\renewcommand{\@dtl@updatekeys}[3]{%                         %AH UNSTARRED
+  \@sDTLifhaskey{#1}{#2}%
+  {%
+    \expandafter\dtlcolumnnum\expandafter
+      =\dtlcolumnindex{#1}{#2}\relax
+    \edef\@dtl@dogetprops{\noexpand\@dtl@getprops
+      {\noexpand\@dtl@key}{\noexpand\@dtl@type}%
+      {\noexpand\@dtl@colhead}{\noexpand\@dtl@before}%
+      {\noexpand\@dtl@after}{\the\csname dtlkeys@#1\endcsname}%
+      {\number\dtlcolumnnum}}
+    \@dtl@dogetprops
+    \def\@dtl@tmp{#3}%
+    \ifx\@dtl@tmp\@empty
+    \else
+      \let\@dtl@oldtype\@dtl@type
+      \@dtl@checknumerical{#3}%
+      \ifx\@dtl@type\@empty
+        \edef\@dtl@type{\number\@dtl@datatype}%
+      \else
+        \ifcase\@dtl@datatype % string
+          \def\@dtl@type{0}%
+        \or % int
+        \or % real
+          \ifnum\@dtl@type=1\relax
+            \def\@dtl@type{2}%
+          \fi
+        \or % currency
+          \ifnum\@dtl@type>0\relax
+            \def\@dtl@type{3}%
+          \fi
+        \fi
+      \fi
+      \ifx\@dtl@oldtype\@dtl@type
+      \else
+        \toks@gconcat@middle@cx{dtlkeys@#1}%
+        {\@dtl@before}%
+        {%
+          \noexpand\db@plist@elt@w% start of key block
+            \noexpand\db@col@id@w \the\dtlcolumnnum
+              \noexpand\db@col@id@end@% column index
+            \noexpand\db@key@id@w #2\noexpand\db@key@id@end@% key id
+            \noexpand\db@type@id@w \@dtl@type
+              \noexpand\db@type@id@end@% data type
+            \noexpand\db@header@id@w \the\@dtl@colhead
+              \noexpand\db@header@id@end@% header
+            \noexpand\db@col@id@w \the\dtlcolumnnum
+              \noexpand\db@col@id@end@% column index
+            \noexpand\db@plist@elt@end@% end of key block
+        }%
+        {\@dtl@after}%
+      \fi
+    \fi
+  }%
+  {%
+    \expandafter\global\expandafter\advance
+      \csname dtlcols@#1\endcsname by 1\relax
+    \dtlcolumnnum=\csname dtlcols@#1\endcsname\relax
+    \expandafter\xdef\csname dtl@ci@#1@#2\endcsname{%
+      \number\dtlcolumnnum}%
+    \def\@dtl@tmp{#3}%
+    \ifx\@dtl@tmp\@empty
+      \edef\@dtl@type{}% don't know data type yet
+    \else
+      \@dtl@checknumerical{#3}%
+      \edef\@dtl@type{\number\@dtl@datatype}%
+    \fi
+    \toks@gput@right@cx{dtlkeys@#1}%
+    {%
+      \noexpand\db@plist@elt@w
+      \noexpand\db@col@id@w \the\dtlcolumnnum
+        \noexpand\db@col@id@end@
+      \noexpand\db@key@id@w #2\noexpand\db@key@id@end@
+      \noexpand\db@type@id@w \@dtl@type
+        \noexpand\db@type@id@end@
+      \noexpand\db@header@id@w #2\noexpand\db@header@id@end@
+      \noexpand\db@col@id@w \the\dtlcolumnnum
+        \noexpand\db@col@id@end@
+      \noexpand\db@plist@elt@end@
+    }%
+  }%
+}
+
+
+\renewcommand*{\dtlexpandnewvalue}{%
+  \long\def\@dtl@setnewvalue##1{\protected@edef\@dtl@tmp{##1}%        %AH ADDED \long
+  \expandafter\@dtl@toks\expandafter{\@dtl@tmp}}%
+}
+\renewcommand*{\dtlnoexpandnewvalue}{%
+  \long\def\@dtl@setnewvalue##1{\@dtl@toks{##1}}%                     %AH ADDED \long
+}
+\dtlnoexpandnewvalue
+
+
+
+\renewcommand{\@sDTLnewdbentry}[3]{%                                  %AH UNSTARRED
+  \@dtl@updatekeys{#1}{#2}{#3}%
+  \expandafter\dtlcolumnnum\expandafter
+    =\dtlcolumnindex{#1}{#2}\relax
+  \edef\dtl@dogetrow{\noexpand\dtlgetrow{#1}%
+    {\number\csname dtlrows@#1\endcsname}}%
+  \dtl@dogetrow
+  \edef\dtl@dogetentry{\noexpand\dtlgetentryfromcurrentrow
+     {\noexpand\dtl@entry}{\number\dtlcolumnnum}%
+  }%
+  \dtl@dogetentry
+  \ifx\dtl@entry\dtlnovalue
+  \@dtl@setnewvalue{#3}%
+    \toks@gconcat@middle@cx{dtldb@#1}%
+    {\dtlbeforerow}%
+    {%
+      \noexpand\db@row@elt@w%
+      \noexpand\db@row@id@w \number\csname dtlrows@#1\endcsname
+        \noexpand\db@row@id@end@%
+      \the\dtlcurrentrow
+      \noexpand\db@col@id@w \number\dtlcolumnnum
+        \noexpand\db@col@id@end@%
+          \noexpand\db@col@elt@w \the\@dtl@toks
+            \noexpand\db@col@elt@end@%
+      \noexpand\db@col@id@w \number\dtlcolumnnum
+        \noexpand\db@col@id@end@%
+      \noexpand\db@row@id@w \number\csname dtlrows@#1\endcsname
+        \noexpand\db@row@id@end@%
+      \noexpand\db@row@elt@end@%
+    }%
+    {\dtlafterrow}%
+    \dtl@message{Added #2\space -> #3\space to database `#1'}%
+  \else
+    \PackageError{datatool}{Can't add entry with ID `#2' to
+      current row of database `#1'}{There is already an entry with
+      this ID in the current row}%
+  \fi
+}
+
+
+\renewcommand{\@dtl@assign}[2]{%                     %AH UNSTARRED
+  \@dtl@assigncmd#1,\@nil\@@{#2}%
+}
+
+\long\def\@dtl@assigncmd#1#2=#3,#4\@@#5{%            %AH ADDED \long
+  \@sDTLifhaskey{#5}{#3}%
+  {%
+    \edef\@dtl@dogetentry{%
+      \noexpand\dtlgetentryfromcurrentrow
+        {\noexpand#1}{\dtlcolumnindex{#5}{#3}}}%
+    \@dtl@dogetentry
+    \ifx#1\dtlnovalue
+      \@@dtl@setnull{#1}{#3}%
+    \fi
+    \global\let#1=#1\relax
+  }%
+  {%
+    \PackageError{datatool}{Can't assign \string#1\space: there
+     is no key `#3' in data base `#5'}{}%
+    \global\let#1\DTLstringnull
+  }%
+  \def\dtl@tmp{#4}%
+  \ifx\@nnil\dtl@tmp
+    \let\@dtl@next\@dtl@assigncmdnoop
+  \else
+    \let\@dtl@next\@dtl@assigncmd
+  \fi
+  \@dtl@next#4\@@{#5}%
+}
+\long\def\@dtl@assigncmdnoop#1\@@#2{} %AH made long
+
+
+
+
+\renewcommand{\@dtlgetrow}[2]{%                    %AH UNSTARRED
+  \long\def\@dtl@getrow##1% before stuff           %AH ADDED \long
+    \db@row@elt@w% start of the row
+      \db@row@id@w #2\db@row@id@end@% row id
+        ##2%
+      \db@row@id@w #2\db@row@id@end@% row id
+    \db@row@elt@end@% end of the row
+        ##3% after stuff
+    \q@nil{\dtlbeforerow={##1}\dtlcurrentrow={##2}\dtlafterrow={##3}}%
+  \@dtl@getrow#1\q@nil
+}
+
+
+\renewcommand{\dtl@getentryfromrow}[3]{%             %AH UNSTARRED
+  \long\def\dtl@dogetentry##1% before stuff          %AH ADDED \long 
+    \db@col@id@w #2\db@col@id@end@% Column id
+      \db@col@elt@w ##2\db@col@elt@end@% Value
+    \db@col@id@w #2\db@col@id@end@% Column id
+    ##3% Remaining stuff
+    \q@nil{\def#1{##2}}%
+  \dtl@dogetentry#3%
+    \db@col@id@w #2\db@col@id@end@%
+      \db@col@elt@w \@dtlnovalue\db@col@elt@end@%
+    \db@col@id@w #2\db@col@id@end@%
+    \q@nil
+}
+
+
+\renewcommand{\DTLsplitstring}[4]{%                   %AH UNSTARRED
+\long\def\dtl@splitstr##1#2##2\@nil{%                 %AH ADDED \long
+\def#3{##1}%
+\def#4{##2}%
+\ifx#4\@empty
+  \let\@dtl@replaced=\@empty
+\else
+  \def\@dtl@replaced{#2}%
+  \dtl@split@str##2\@nil
+\fi
+}%
+\long\def\dtl@split@str##1#2\@nil{%                   %AH ADDED \long
+\def#4{##1}}%
+\dtl@splitstr#1#2\@nil
+}
+
+\long\def\@dtl@ifsingle#1#2\@nil#3#4{%                %AH ADDED \long
+\def\dtl@sg@arg{#2}%
+\ifx\dtl@sg@arg\@empty
+ #3%
+\else
+ #4%
+\fi
+}
+
+\endinput
+%%
+%% End of file `longdata.sty'.

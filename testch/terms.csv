@@ -1,0 +1,12 @@
+name,hanzi,pinyin,gloss,notone,other,othernotone,description,inglossary
+baijia,百家,bǎijiā ,Hundred Schools,bai jia,,,flourishing of intellectual thought in the pre\-/Qin period\comma\ somewhat inaccurately portrayed as distinct \qt{schools} by Han dynasty scholars and thereafter,
+leitui,類推,lèituī,kind\-/based inference,lei tui,,,also known as \tm{tuilei},
+ming,命,mìng,fate,ming,,,,no
+ming2,名,míng,name,ming,,,also controversially interpreted as \qt{concept}\comma\ one of the \tme{mojia} \tm{mingcishuobian}\comma\ of central interest both in its relation to \tmc{shi} and in the topic of \tmc{zhengming},
+mingcishuobian,名辭說辯,míngcíshuōbiàn,logico\-/linguistic categories,ming ci shuo bian,,,literally \qt{name\comma\ phrase\comma\ explanation\comma\ disputation}\comma\ a sequence of categories discussed in the \bk{mojing} and \bk{xunzi},
+mingxue,名學,míngxué,study of names,ming xue,,,term for \qt{logic} dating from 1895 (\pn{yanfu}),
+mojia,墨家,mòjiā,Mohist,mo jia,,,followers of the teachings of \pn{mozi}\comma\ flourishing in the \nth{5} to \nth{3} centuries \bce\ but extinct from the Qin dynasty\semicolon\  the later members of this school were the authors of the \bk{mobian} and are often referred to as \qt{Later Mohists}\semicolon\ one of the \tme{baijia},
+rujia,儒家,rújiā,Confucian,ru jia,,,one of the \tmf{baijia}\comma\ literally the \qt{school of ritual specialists} of which \pno{kongzi} was one\comma\ but later identified with those following his teachings such as \pno{mengzi}\comma\ \pn{xunzi} and the many scholars that followed them,
+shi,實,shí,object,shi,,,also interpreted as \qt{reality} or more neutrally \qt{stuff}\comma\ what language talks about\comma\  understood in relation to \tmf{ming2},
+tuilei,推類,tuīlèi,kind\-/based inference,tui lei,,,the central \tme{mojia} conception of inference\comma\ also known as \tmf{leitui},
+zhengming,正名,zhèngmíng,correcting names,zheng ming,,,doctrine concerning the relationship between \tmf{ming2} and \tmf{shi}\comma\  discussed mostly by \tme{rujia}s,

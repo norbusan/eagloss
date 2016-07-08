@@ -1,0 +1,47 @@
+\documentclass[english]{article}
+\usepackage{csquotes}
+\usepackage[datamodel=multiscript,backend=biber]{biblatex}
+\usepackage{hyperref}
+\addbibresource{\jobname.bib}
+
+\newbibmacro*{romaji}{%
+  \printnames{romaji}%
+}
+\newbibmacro*{kanji}{%
+  [\printfield{kanji}]}
+\newbibmacro*{furi}{%
+  (\printfield{furi})}
+
+\DeclareBibliographyDriver{person}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{romaji}%
+  \addspace
+  \usebibmacro{furi}%
+  \addspace
+  \usebibmacro{kanji}%
+  \addspace
+  \usebibmacro{finentry}}
+
+%\DeclareBibliographyDriver{book}{%
+%  \usebibmacro{bibindex}%
+%  \usebibmacro{begentry}%
+%
+%
+%}
+
+\renewcommand\mkbibnamefamily[1]{%
+  \message{[mkbibnamefamily] key = #1 ^^J}%
+  \ifentryinbib{#1}{%
+  \message{[mkbibnamefamily] recursing ^^J}%
+  \entrydata{#1}{%
+    \printnames{romaji} (\printfield{kanji}, \printfield{furi})}}{%
+  #1}}
+
+\begin{document}
+\nocite{*}
+The author First Second \cite{n1} wrote book \cite{b1}.
+
+
+\printbibliography
+\end{document}
