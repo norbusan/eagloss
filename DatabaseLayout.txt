@@ -1,0 +1,34 @@
+Person
+	id(name)
+	hanzi
+	pinyin
+	notone		(pinyin without tone indication)
+	other		(other possible names, in pinyin)
+	othernotone	(other possible names, in notone)
+	wadegiles	(???)
+	description	(longer description about the person)
+	index		(???)
+	inglossary	(what is this?)
+
+Term
+	id(name)
+	hanzi
+	pinyin
+	gloss
+	notone
+	other
+	othernotone
+	description
+	inglossary
+
+Book
+	id(name)
+	hanzi		(title in hanzi)
+	pinyin
+	notone
+	gloss
+	other
+	othernotone
+	description
+	inglossary
+
