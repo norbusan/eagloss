@@ -18,12 +18,15 @@
 %\newfontfamily\greekfont[Mapping=tex-text]{Times New Roman}
 
 
-\def\bk#1{\cite{#1}}
-\def\pn#1{\cite{#1}}
-\def\tme#1{\cite{#1}}
-\def\tmc#1{\cite{#1}}
-\def\tmf#1{\cite{#1}}
-\def\tm#1{\cite{#1}}
+%
+% the generated bib entries have bk-/pn-/tm- prefix to make
+% them unique.
+\def\bk#1{\cite{bk-#1}}
+\def\pn#1{\cite{pn-#1}}
+\def\tme#1{\cite{tm-#1}}
+\def\tmc#1{\cite{tm-#1}}
+\def\tmf#1{\cite{tm-#1}}
+\def\tm#1{\cite{tm-#1}}
 \def\semicolon{;}
 \def\colon{:}  
 
