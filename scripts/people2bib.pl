@@ -27,7 +27,7 @@ while (my $row = $p->getline( $fh ) ) {
   $description =~ s/\\comma/,/g;
   my $index = $row->[8];
   my $inglossary = $row->[9];
-  printf $out '@person{' . $id . ",\n";
+  printf $out '@person{pn-' . $id . ",\n";
   printf $out "  hanzi = \{$hanzi\},\n" if $hanzi;
   printf $out "  pinyin = \{$pinyin\},\n" if $pinyin;
   printf $out "  notone = \{$notone\},\n" if $notone;

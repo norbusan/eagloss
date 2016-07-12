@@ -26,7 +26,7 @@ while (my $row = $p->getline( $fh ) ) {
   $description =~ s/\\comma\\ /, /g;
   $description =~ s/\\comma/,/g;
   my $inglossary = $row->[9];
-  printf $out '@term{' . $id . ",\n";
+  printf $out '@term{tm-' . $id . ",\n";
   printf $out "  hanzi = \{$hanzi\},\n" if $hanzi;
   printf $out "  pinyin = \{$pinyin\},\n" if $pinyin;
   printf $out "  gloss = \{$gloss\},\n" if $gloss;
