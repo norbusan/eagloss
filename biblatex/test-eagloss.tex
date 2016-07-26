@@ -1,0 +1,119 @@
+\documentclass[english]{article}
+\usepackage{csquotes}
+\usepackage[texencoding=utf8,datamodel=eagloss,backend=biber]{biblatex}
+\usepackage{hyperref}
+\usepackage[super]{nth}
+
+% Fonts
+\usepackage{fontspec} 
+\usepackage{xeCJK} 
+%\setmainfont[Mapping=tex-text]{Times New Roman} % rm
+%\setsansfont[Mapping=tex-text]{Arial}           % sf
+%\setmonofont{Courier New}                       % tt
+%\setCJKmainfont{HAN NOM A} %xelatex 標楷體
+%\setCJKmonofont{MingLiU}  %xelatex 細明體
+\xeCJKDeclareSubCJKBlock{ExtB}{ "20000 -> "2A6DF }
+%\setCJKmainfont[ExtB=HAN NOM B,AutoFakeBold=1.5]{HAN NOM A}
+%\setCJKsansfont[ExtB=HAN NOM B,AutoFakeBold=1.5]{HAN NOM A}
+%\newfontfamily\greekfont[Mapping=tex-text]{Times New Roman}
+
+
+%
+% the generated bib entries have bk-/pn-/tm- prefix to make
+% them unique.
+\def\bk#1{\cite{bk-#1}}
+\def\pn#1{\cite{pn-#1}}
+\def\tme#1{\cite{tm-#1}}
+\def\tmc#1{\cite{tm-#1}}
+\def\tmf#1{\cite{tm-#1}}
+\def\tm#1{\cite{tm-#1}}
+\def\semicolon{;}
+\def\colon{:}  
+
+% Quotation marks
+\newif\ifbritquote\britquotefalse  
+%\britquotetrue % uncomment for British
+\newif\ifinsidequote\insidequotefalse
+\def\qt#1{\ifinsidequote\insidequotefalse\insidequote{#1}\insidequotetrue\else\insidequotetrue\outsidequote{#1}\insidequotefalse\fi}
+\def\insidequote#1{\ifbritquote ``#1"\else `#1'\fi}
+\def\outsidequote#1{\ifbritquote `#1'\else ``#1"\fi}
+% and for Chinese
+\def\cqt#1{\ifinsidequote\insidequotefalse‘#1’\insidequotetrue\else\insidequotetrue“#1”\insidequotefalse\fi}
+% also 书名号
+\def\smh#1{《\hspace*{-2pt}#1\hspace*{-2pt}》}
+
+\def\bce{B.C.E.}
+
+
+
+\addbibresource{books.bib}
+\addbibresource{people.bib}
+\addbibresource{terms.bib}
+
+\newbibmacro*{hanzi}{\printnames{hanzi}}
+\newbibmacro*{pinyin}{\textbf{\printnames{pinyin}}}
+\newbibmacro*{notone}{\printnames{notone}}
+\newbibmacro*{other}{\printnames{other}}
+\newbibmacro*{othernotone}{\printnames{othernotone}}
+
+\newbibmacro*{gloss}{%
+  (gloss: \printfield{gloss})}
+\newbibmacro*{inglossary}{%
+  (inglossary: \printfield{inglossary})}
+\newbibmacro*{index}{%
+  (index: \printfield{index})}
+\newbibmacro*{wadefiles}{%
+  (wadefiles: \printfield{wadefiles})}
+\newbibmacro*{description}{%
+  (desc: \printfield{description}))}
+
+\DeclareBibliographyDriver{term}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{pinyin}%
+  \addspace
+  \usebibmacro{hanzi}%
+  \addspace
+  (\usebibmacro{gloss}),%
+  \addspace
+  \usebibmacro{description}%
+  \usebibmacro{finentry}
+}
+
+\DeclareBibliographyDriver{eabook}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{pinyin}%
+  \addspace
+  《\usebibmacro{hanzi}》%
+  \addspace
+  (\usebibmacro{gloss}),%
+  \addspace
+  \usebibmacro{description}%
+  \usebibmacro{finentry}
+}
+
+\DeclareBibliographyDriver{person}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \textbf{\usebibmacro{notone}}%
+  \addspace
+  \usebibmacro{hanzi}%
+  \addspace
+  (\usebibmacro{pinyin})%
+  \addspace
+  \usebibmacro{description}
+  \usebibmacro{finentry}}
+
+%\renewcommand\mkbibnamefamily[1]{%
+%  \message{[mkbibnamefamily] key = #1 ^^J}%
+%  \ifentryinbib{#1}{%
+%  \message{[mkbibnamefamily] recursing ^^J}%
+%  \entrydata{#1}{%
+%    \printnames{romaji} (\printfield{kanji}, \printfield{furi})}}{%
+%  #1}}
+
+\begin{document}
+\nocite{*}
+\printbibliography
+\end{document}

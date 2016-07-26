@@ -1,0 +1,46 @@
+\DeclareDatamodelEntrytypes{person,term,eabook}
+\DeclareDatamodelFields[type=field,datatype=literal]{
+  gloss,
+  description,
+  inglossary,
+  wadegiles,
+  index,
+}
+\DeclareDatamodelFields[type=list,datatype=name]{
+  hanzi,
+  pinyin,
+  notone,
+  other,
+  othernotone
+}
+\DeclareDatamodelEntryfields[person]{
+  hanzi,
+  pinyin,
+  other,
+  othernotone,
+  wadegiles,
+  description,
+  index,
+  inglossary,
+}
+\DeclareDatamodelEntryfields[term]{
+  hanzi,
+  pinyin,
+  gloss,
+  notone,
+  other,
+  othernotone,
+  description,
+  inglossary,
+}
+\DeclareDatamodelEntryfields[eabook]{
+  hanzi,
+  pinyin,
+  notone,
+  gloss,
+  other,
+  othernotone,
+  description,
+  inglossary,
+}
+
